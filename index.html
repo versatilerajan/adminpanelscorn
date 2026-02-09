@@ -57,7 +57,6 @@
       z-index: 2;
     }
 
-    /* Login Screen */
     .login-screen {
       display: flex;
       align-items: center;
@@ -225,7 +224,6 @@
       background: #059669;
     }
 
-    /* Dashboard */
     .dashboard {
       display: none;
     }
@@ -441,7 +439,6 @@
       display: none !important;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -488,12 +485,12 @@
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input type="email" id="email" required autocomplete="email">
+          <input type="email" id="email" value="admin@bpsc.com" required autocomplete="email">
         </div>
         
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" required autocomplete="current-password">
+          <input type="password" id="password" value="admin123" required autocomplete="current-password">
         </div>
         
         <button type="submit" class="btn btn-primary">
@@ -523,7 +520,7 @@
       <!-- Create Test Tab -->
       <div id="createTab" class="tab-content active">
         <div class="card">
-          <h2 class="card-title">Create New Test</h2>
+          <h2 class="card-title">Create New Test with 50 Questions</h2>
           
           <div id="createAlert"></div>
           
@@ -535,7 +532,7 @@
               </div>
               
               <div class="form-group">
-                <label for="testDate">Test Date</label>
+                <label for="testDate">Test Date (YYYY-MM-DD)</label>
                 <input type="date" id="testDate" required>
               </div>
               
@@ -551,7 +548,7 @@
             </div>
             
             <div class="form-group">
-              <label for="questionsJson">Questions (JSON Format - 50 Questions)</label>
+              <label for="questionsJson">Questions (JSON Format - Exactly 50 Questions)</label>
               <textarea id="questionsJson" placeholder='Paste your JSON array here...' required></textarea>
               
               <div class="code-hint">
@@ -597,7 +594,7 @@
 
   <script>
     const API_URL = 'https://cronadminbackend.vercel.app';
-    let adminCredentials = null;
+    let authToken = null;
 
     // Login
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -623,12 +620,13 @@
         
         const data = await response.json();
         
-        if (data.success) {
-          adminCredentials = { email, password };
-          sessionStorage.setItem('adminAuth', JSON.stringify(adminCredentials));
+        if (data.token) {
+          authToken = data.token;
+          sessionStorage.setItem('authToken', authToken);
+          sessionStorage.setItem('adminEmail', email);
           showDashboard();
         } else {
-          throw new Error(data.message);
+          throw new Error(data.message || 'Login failed');
         }
       } catch (error) {
         errorDiv.textContent = error.message || 'Invalid credentials';
@@ -641,9 +639,9 @@
 
     // Check if already logged in
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = sessionStorage.getItem('adminAuth');
-      if (saved) {
-        adminCredentials = JSON.parse(saved);
+      const savedToken = sessionStorage.getItem('authToken');
+      if (savedToken) {
+        authToken = savedToken;
         showDashboard();
       }
     });
@@ -651,16 +649,19 @@
     function showDashboard() {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
-      document.getElementById('userEmail').textContent = adminCredentials.email;
+      document.getElementById('userEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@bpsc.com';
       loadTests();
     }
 
     function logout() {
-      sessionStorage.removeItem('adminAuth');
-      adminCredentials = null;
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('adminEmail');
+      authToken = null;
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginForm').reset();
+      document.getElementById('email').value = 'admin@bpsc.com';
+      document.getElementById('password').value = 'admin123';
     }
 
     // Tab switching
@@ -678,7 +679,7 @@
       }
     }
 
-    // Create test
+    // Create test with 50 questions
     document.getElementById('createTestForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -713,12 +714,11 @@
           throw new Error(`You must provide exactly 50 questions (you provided ${questions.length})`);
         }
         
-        const response = await fetch(`${API_URL}/admin/create-test`, {
+        const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'email': adminCredentials.email,
-            'password': adminCredentials.password
+            'Authorization': `Bearer ${authToken}`
           },
           body: JSON.stringify({
             title,
@@ -734,7 +734,9 @@
         if (response.ok && data.success) {
           alertDiv.innerHTML = `<div class="alert alert-success">✓ Test "${data.title}" created successfully with 50 questions!</div>`;
           document.getElementById('createTestForm').reset();
+          document.getElementById('testDate').valueAsDate = new Date();
           setTimeout(() => {
+            alertDiv.innerHTML = '';
             switchTab('manage');
           }, 2000);
         } else {
@@ -756,8 +758,7 @@
       try {
         const response = await fetch(`${API_URL}/admin/tests`, {
           headers: {
-            'email': adminCredentials.email,
-            'password': adminCredentials.password
+            'Authorization': `Bearer ${authToken}`
           }
         });
         
@@ -769,7 +770,7 @@
               <div class="test-info">
                 <h3>${test.title}</h3>
                 <div class="test-meta">
-                  <span>📅 ${new Date(test.date).toLocaleDateString()}</span>
+                  <span>📅 ${test.date}</span>
                   <span>📝 ${test.totalQuestions} Questions</span>
                   <span>🕐 ${new Date(test.startTime).toLocaleString()}</span>
                 </div>
@@ -787,18 +788,17 @@
 
     // Delete test
     async function deleteTest(testId, testTitle) {
-      if (!confirm(`Are you sure you want to delete "${testTitle}"? This will also delete all associated questions and results.`)) {
+      if (!confirm(`Are you sure you want to delete "${testTitle}"? This will also delete all associated questions.`)) {
         return;
       }
       
       const alertDiv = document.getElementById('manageAlert');
       
       try {
-        const response = await fetch(`${API_URL}/admin/test/${testId}`, {
+        const response = await fetch(`${API_URL}/admin/delete-test/${testId}`, {
           method: 'DELETE',
           headers: {
-            'email': adminCredentials.email,
-            'password': adminCredentials.password
+            'Authorization': `Bearer ${authToken}`
           }
         });
         
