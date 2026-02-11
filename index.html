@@ -24,15 +24,14 @@
       font-family: 'JetBrains Mono', monospace;
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: var(--text);
-      min-height: 100vh;
+      min-height:100vh;
       position: relative;
       overflow-x: hidden;
     }
     body::before {
       content: '';
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       background-image:
         repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(248,250,252,0.03) 2px, rgba(248,250,252,0.03) 4px),
         repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(248,250,252,0.03) 2px, rgba(248,250,252,0.03) 4px);
@@ -57,12 +56,12 @@
     .login-subtitle { color:var(--text-secondary); margin-bottom:2rem; font-size:0.875rem; text-transform:uppercase; letter-spacing:2px; }
     .form-group { margin-bottom:1.5rem; }
     label { display:block; margin-bottom:0.5rem; color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
-    input[type="email"], input[type="password"], input[type="text"], input[type="date"], input[type="datetime-local"], textarea {
+    input[type="email"], input[type="password"], input[type="text"], input[type="date"], input[type="datetime-local"], textarea, select {
       width:100%; padding:0.875rem 1rem;
       background:var(--secondary); border:1px solid var(--border); border-radius:2px;
       color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.875rem; transition:all 0.2s;
     }
-    input:focus, textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(245,158,11,0.1); }
+    input:focus, textarea:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(245,158,11,0.1); }
     textarea { min-height:400px; font-size:0.8rem; line-height:1.6; resize:vertical; }
     .btn {
       padding:0.875rem 2rem; border:none; border-radius:2px;
@@ -128,6 +127,7 @@
     }
     @keyframes spin { to {transform:rotate(360deg);} }
     .hidden { display:none !important; }
+    .question-count-selector { margin-bottom:1.5rem; }
     @media (max-width:768px) {
       .header { flex-direction:column; align-items:flex-start; gap:1rem; }
       .header-title { font-size:2rem; }
@@ -139,26 +139,25 @@
   </style>
 </head>
 <body>
-
   <!-- Login Screen -->
   <div id="loginScreen" class="login-screen">
     <div class="login-box">
       <h1 class="login-title">BPSC</h1>
       <p class="login-subtitle">Admin Control Panel</p>
-     
+    
       <div id="loginError" class="alert alert-error hidden"></div>
-     
+    
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" value="admin@bpsc.com" required autocomplete="email">
         </div>
-       
+      
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" value="admin123" required autocomplete="current-password">
         </div>
-       
+      
         <button type="submit" class="btn btn-primary">
           <span id="loginBtnText">Access Panel</span>
           <span id="loginLoader" class="loading hidden"></span>
@@ -186,57 +185,65 @@
       <!-- Create Test Tab -->
       <div id="createTab" class="tab-content active">
         <div class="card">
-          <h2 class="card-title">Create New Test with 50 Questions</h2>
-         
+          <h2 class="card-title">Create New Daily Test</h2>
+        
           <div id="createAlert"></div>
-         
+
           <form id="createTestForm">
             <div class="grid">
               <div class="form-group">
                 <label for="testTitle">Test Title</label>
-                <input type="text" id="testTitle" placeholder="e.g., BPSC Daily Test - Feb 09, 2026" required>
+                <input type="text" id="testTitle" placeholder="e.g., BPSC Daily Test - February 12, 2026" required autofocus>
               </div>
-             
+            
               <div class="form-group">
                 <label for="testDate">Test Date (YYYY-MM-DD)</label>
                 <input type="date" id="testDate" required>
               </div>
-             
+            
               <div class="form-group">
-                <label for="startTime">Start Time</label>
-                <input type="datetime-local" id="startTime" required>
+                <label for="startTime">Start Time (IST)</label>
+                <input type="datetime-local" id="startTime">
               </div>
-             
+            
               <div class="form-group">
-                <label for="endTime">End Time</label>
-                <input type="datetime-local" id="endTime" required>
+                <label for="endTime">End Time (IST)</label>
+                <input type="datetime-local" id="endTime">
               </div>
             </div>
-           
+
+            <div class="question-count-selector form-group">
+              <label for="questionCount">Number of Questions</label>
+              <select id="questionCount" required>
+                <option value="50" selected>Monday–Saturday — 50 questions</option>
+                <option value="150">Sunday — 150 questions</option>
+              </select>
+            </div>
+          
             <div class="form-group">
-              <label for="questionsJson">Questions (JSON Format - Exactly 50 Questions)</label>
+              <label for="questionsJson">Questions (JSON Array — must match selected count)</label>
               <textarea id="questionsJson" placeholder='Paste your JSON array here...' required></textarea>
-             
+            
               <div class="code-hint">
-                <strong>JSON Format Example:</strong><br>
+                <strong>Expected JSON format (array of objects):</strong><br>
                 [<br>
                 &nbsp;&nbsp;{<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;"questionNumber": 1,<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;"questionStatement": "What is the capital of Bihar?",<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;"options": {<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option1": "Patna",<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option2": "Gaya",<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option3": "Muzaffarpur",<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option4": "Bhagalpur"<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option2": "Gaya", ...<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;},<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;"correctOption": "option1"<br>
-                &nbsp;&nbsp;}<br>
-                ]
+                &nbsp;&nbsp;},<br>
+                &nbsp;&nbsp;...<br>
+                ]<br><br>
+                <strong>Important:</strong> Number of objects must exactly match the selected count above (50 or 150).
               </div>
             </div>
-           
+          
             <button type="submit" class="btn btn-success" id="createBtn">
-              <span id="createBtnText">Create Test with 50 Questions</span>
+              <span id="createBtnText">Create Test (50 questions)</span>
               <span id="createLoader" class="loading hidden"></span>
             </button>
           </form>
@@ -246,10 +253,10 @@
       <!-- Manage Tests Tab -->
       <div id="manageTab" class="tab-content">
         <div class="card">
-          <h2 class="card-title">All Tests</h2>
-         
+          <h2 class="card-title">Existing Tests</h2>
+        
           <div id="manageAlert"></div>
-         
+        
           <div id="testsList" class="test-list">
             <p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>
           </div>
@@ -262,17 +269,23 @@
     const API_URL = 'https://cronadminbackend.vercel.app';
     let authToken = null;
 
+    // Update button text when question count changes
+    document.getElementById('questionCount').addEventListener('change', function() {
+      const count = this.value;
+      document.getElementById('createBtnText').textContent = `Create Test (${count} questions)`;
+    });
+
     // Login
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-     
+    
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-     
+    
       const loginBtn = document.getElementById('loginBtnText');
       const loginLoader = document.getElementById('loginLoader');
       const errorDiv = document.getElementById('loginError');
-     
+    
       loginBtn.classList.add('hidden');
       loginLoader.classList.remove('hidden');
       errorDiv.classList.add('hidden');
@@ -285,15 +298,12 @@
           body: JSON.stringify({ email, password })
         });
 
-        console.log('Login response status:', response.status);
-
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
           throw new Error(errData.message || `Server error (${response.status})`);
         }
 
         const data = await response.json();
-
         if (data.success && data.token) {
           authToken = data.token;
           sessionStorage.setItem('authToken', authToken);
@@ -303,7 +313,6 @@
           throw new Error(data.message || 'Login failed');
         }
       } catch (error) {
-        console.error('Login fetch error:', error);
         errorDiv.textContent = error.message || 'Failed to connect to server';
         errorDiv.classList.remove('hidden');
       } finally {
@@ -312,13 +321,14 @@
       }
     });
 
-    // Check if already logged in
+    // Auto-login from session
     window.addEventListener('DOMContentLoaded', () => {
       const savedToken = sessionStorage.getItem('authToken');
       if (savedToken) {
         authToken = savedToken;
         showDashboard();
       }
+      // Default to today
       document.getElementById('testDate').valueAsDate = new Date();
     });
 
@@ -344,7 +354,7 @@
     function switchTab(tab) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-     
+    
       if (tab === 'create') {
         document.querySelector('.tab:nth-child(1)').classList.add('active');
         document.getElementById('createTab').classList.add('active');
@@ -355,45 +365,55 @@
       }
     }
 
-    // Create test with 50 questions
+    // Create test
     document.getElementById('createTestForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-     
+    
       const alertDiv = document.getElementById('createAlert');
       const createBtn = document.getElementById('createBtnText');
       const createLoader = document.getElementById('createLoader');
-     
+    
       alertDiv.innerHTML = '';
       createBtn.classList.add('hidden');
       createLoader.classList.remove('hidden');
-     
+    
       try {
         const title = document.getElementById('testTitle').value.trim();
         const date = document.getElementById('testDate').value;
         const startTime = document.getElementById('startTime').value;
         const endTime = document.getElementById('endTime').value;
+        const questionCount = parseInt(document.getElementById('questionCount').value);
         const questionsText = document.getElementById('questionsJson').value.trim();
-       
+      
         let questions;
         try {
           questions = JSON.parse(questionsText);
         } catch (err) {
-          throw new Error('Invalid JSON format. Please check syntax.');
+          throw new Error('Invalid JSON format. Please check syntax and commas.');
         }
-       
-        if (!Array.isArray(questions)) throw new Error('Questions must be an array');
-        if (questions.length !== 50) throw new Error(`Exactly 50 questions required (got ${questions.length})`);
-       
+      
+        if (!Array.isArray(questions)) throw new Error('Questions must be a JSON array []');
+        if (questions.length !== questionCount) {
+          throw new Error(`Exactly ${questionCount} questions required (you provided ${questions.length})`);
+        }
+      
+        const payload = {
+          title,
+          date,
+          startTime: startTime || undefined,
+          endTime: endTime || undefined,
+          questions,
+          totalQuestions: questionCount   // optional – backend can count array
+        };
+      
         const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
-          body: JSON.stringify({ title, date, startTime, endTime, questions })
+          body: JSON.stringify(payload)
         });
-
-        console.log('Create test status:', response.status);
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
@@ -401,20 +421,20 @@
         }
 
         const data = await response.json();
-
         if (data.success) {
-          alertDiv.innerHTML = `<div class="alert alert-success">✓ Test "${title}" created successfully with 50 questions!</div>`;
+          alertDiv.innerHTML = `<div class="alert alert-success">✓ Test "${title}" (${questionCount} questions) created successfully!</div>`;
           document.getElementById('createTestForm').reset();
           document.getElementById('testDate').valueAsDate = new Date();
+          document.getElementById('questionCount').value = "50";
+          document.getElementById('createBtnText').textContent = "Create Test (50 questions)";
           setTimeout(() => {
             alertDiv.innerHTML = '';
             switchTab('manage');
-          }, 2500);
+          }, 2800);
         } else {
-          throw new Error(data.message || 'Failed to create test');
+          throw new Error(data.message || 'Creation failed');
         }
       } catch (error) {
-        console.error('Create test error:', error);
         alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
       } finally {
         createBtn.classList.remove('hidden');
@@ -422,25 +442,19 @@
       }
     });
 
-    // Load tests
+    // Load tests list
     async function loadTests() {
       const testsDiv = document.getElementById('testsList');
       testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>';
-     
+    
       try {
         const response = await fetch(`${API_URL}/admin/tests`, {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
 
-        console.log('Load tests status:', response.status);
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Server error (${response.status})`);
-        }
+        if (!response.ok) throw new Error(`Server error (${response.status})`);
 
         const data = await response.json();
-
         if (data.success && data.tests?.length > 0) {
           testsDiv.innerHTML = data.tests.map(test => `
             <div class="test-item">
@@ -448,8 +462,8 @@
                 <h3>${test.title}</h3>
                 <div class="test-meta">
                   <span>📅 ${test.date}</span>
-                  <span>📝 ${test.totalQuestions} Questions</span>
-                  <span>🕐 ${new Date(test.startTime).toLocaleString()}</span>
+                  <span>📝 ${test.totalQuestions || '?'} Questions</span>
+                  <span>🕐 ${test.startTimeIST ? new Date(test.startTimeIST).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : '—'}</span>
                 </div>
               </div>
               <button class="btn btn-danger" onclick="deleteTest('${test._id}', '${test.title.replace(/'/g, "\\'")}')">Delete</button>
@@ -459,14 +473,13 @@
           testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">No tests found</p>';
         }
       } catch (error) {
-        console.error('Load tests error:', error);
         testsDiv.innerHTML = `<p style="color:var(--danger); text-align:center;">Error: ${error.message}</p>`;
       }
     }
 
     // Delete test
     async function deleteTest(testId, testTitle) {
-      if (!confirm(`Delete "${testTitle}"? This will also delete all questions.`)) return;
+      if (!confirm(`Delete "${testTitle}"? This action cannot be undone.`)) return;
 
       const alertDiv = document.getElementById('manageAlert');
       alertDiv.innerHTML = '';
@@ -483,16 +496,12 @@
         }
 
         const data = await response.json();
-
         if (data.success) {
-          alertDiv.innerHTML = `<div class="alert alert-success">✓ Test deleted successfully</div>`;
+          alertDiv.innerHTML = `<div class="alert alert-success">✓ "${testTitle}" deleted successfully</div>`;
           loadTests();
           setTimeout(() => alertDiv.innerHTML = '', 3000);
-        } else {
-          throw new Error(data.message || 'Delete failed');
         }
       } catch (error) {
-        console.error('Delete error:', error);
         alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
       }
     }
