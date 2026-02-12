@@ -444,7 +444,7 @@
 
         const data = await response.json();
         if (data.success) {
-          alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType.toUpperCase()} Test "${title}" (${questionCount} questions) created successfully!</div>`;
+          alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType ? data.testType.toUpperCase() : 'Test'} "${title}" (${questionCount} questions) created successfully!</div>`;
           document.getElementById('createTestForm').reset();
           document.getElementById('testDate').valueAsDate = new Date();
           document.getElementById('questionCount').value = "50";
