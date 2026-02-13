@@ -168,24 +168,21 @@
           <div id="createAlert"></div>
 
           <form id="createTestForm">
-            <div class="grid">
-              <div class="form-group">
-                <label for="testTitle">Test Title</label>
-                <input type="text" id="testTitle" placeholder="e.g. BPSC Prelims Mock – 15 Feb" required autofocus>
-              </div>
+           <div class="grid">
+         <div class="form-group">
+              <label for="testTitle">Test Title</label>
+              <input type="text" id="testTitle" placeholder="e.g. BPSC Prelims Mock – 15 Feb" required autofocus>
+             </div>
 
-              <div class="form-group">
-                <label for="testDate">Test Date (YYYY-MM-DD)</label>
-                <input type="date" id="testDate" required>
+            <div class="form-group">
+          <label for="testDate">Test Date (YYYY-MM-DD)</label>
+            <input type="date" id="testDate" required>
+               <div class="time-hint" style="margin-top:0.6rem; font-size:0.82rem; color:#94a3b8;">
+               The test will automatically run full day:<br>
+                   <strong>00:00:00 IST – 23:59:59 IST</strong> on the selected date
               </div>
-
-              <div class="form-group">
-                <label for="startTime">Start Time (IST) – optional</label>
-                <input type="datetime-local" id="startTime">
-                <div class="time-preview">
-                  Leave empty → test starts at <strong>00:00 IST</strong> on selected date
-                </div>
-              </div>
+           </div>
+           </div>
 
               <div class="form-group">
                 <label for="endTime">End Time (IST) – optional</label>
