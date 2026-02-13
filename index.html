@@ -283,257 +283,265 @@
     </div>
   </div>
 
-  <script>
-    const API_URL = 'https://cronadminbackend.vercel.app'; // ← change if needed
-    let authToken = null;
+ <script>
+  const API_URL = 'https://cronadminbackend.vercel.app'; // your backend URL
+  let authToken = null;
 
-    // Update button text when question count or test type changes
-    function updateCreateButtonText() {
-      const count = document.getElementById('questionCount').value;
-      const type = document.getElementById('testType').value;
-      let typeText = type === 'paid' ? 'Paid' : type === 'free' ? 'Free' : '';
-      document.getElementById('createBtnText').textContent =
-        `Create ${typeText ? typeText + ' ' : ''}Test (${count} questions)`;
-    }
+  // Update button text dynamically
+  function updateCreateButtonText() {
+    const count = document.getElementById('questionCount').value;
+    const type = document.getElementById('testType').value;
+    let typeText = type === 'paid' ? 'Paid' : type === 'free' ? 'Free' : '';
+    document.getElementById('createBtnText').textContent =
+      `Create ${typeText ? typeText + ' ' : ''}Test (${count} questions)`;
+  }
 
-    document.getElementById('questionCount').addEventListener('change', updateCreateButtonText);
-    document.getElementById('testType').addEventListener('change', updateCreateButtonText);
+  document.getElementById('questionCount').addEventListener('change', updateCreateButtonText);
+  document.getElementById('testType').addEventListener('change', updateCreateButtonText);
 
-    // Login
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-  
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+  // Login (unchanged)
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const loginBtn = document.getElementById('loginBtnText');
-      const loginLoader = document.getElementById('loginLoader');
-      const errorDiv = document.getElementById('loginError');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-      loginBtn.classList.add('hidden');
-      loginLoader.classList.remove('hidden');
-      errorDiv.classList.add('hidden');
-      errorDiv.textContent = '';
+    const loginBtn = document.getElementById('loginBtnText');
+    const loginLoader = document.getElementById('loginLoader');
+    const errorDiv = document.getElementById('loginError');
 
-      try {
-        const response = await fetch(`${API_URL}/admin/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
+    loginBtn.classList.add('hidden');
+    loginLoader.classList.remove('hidden');
+    errorDiv.classList.add('hidden');
+    errorDiv.textContent = '';
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Server error (${response.status})`);
-        }
+    try {
+      const response = await fetch(`${API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-        const data = await response.json();
-        if (data.success && data.token) {
-          authToken = data.token;
-          sessionStorage.setItem('authToken', authToken);
-          sessionStorage.setItem('adminEmail', email);
-          showDashboard();
-        } else {
-          throw new Error(data.message || 'Login failed');
-        }
-      } catch (error) {
-        errorDiv.textContent = error.message || 'Failed to connect to server';
-        errorDiv.classList.remove('hidden');
-      } finally {
-        loginBtn.classList.remove('hidden');
-        loginLoader.classList.add('hidden');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
       }
-    });
 
-    // Auto-login from session
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedToken = sessionStorage.getItem('authToken');
-      if (savedToken) {
-        authToken = savedToken;
+      const data = await response.json();
+      if (data.success && data.token) {
+        authToken = data.token;
+        sessionStorage.setItem('authToken', authToken);
+        sessionStorage.setItem('adminEmail', email);
         showDashboard();
+      } else {
+        throw new Error(data.message || 'Login failed');
       }
-      document.getElementById('testDate').valueAsDate = new Date();
-      updateCreateButtonText(); // initial button text
-    });
+    } catch (error) {
+      errorDiv.textContent = error.message || 'Failed to connect to server';
+      errorDiv.classList.remove('hidden');
+    } finally {
+      loginBtn.classList.remove('hidden');
+      loginLoader.classList.add('hidden');
+    }
+  });
 
-    function showDashboard() {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      document.getElementById('userEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@bpsc.com';
+  // Auto-login & initial setup
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedToken = sessionStorage.getItem('authToken');
+    if (savedToken) {
+      authToken = savedToken;
+      showDashboard();
+    }
+    document.getElementById('testDate').valueAsDate = new Date();
+    updateCreateButtonText();
+  });
+
+  function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('userEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@bpsc.com';
+    loadTests();
+  }
+
+  function logout() {
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('adminEmail');
+    authToken = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginForm').reset();
+    document.getElementById('email').value = 'admin@bpsc.com';
+    document.getElementById('password').value = 'admin123';
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    if (tab === 'create') {
+      document.querySelector('.tab:nth-child(1)').classList.add('active');
+      document.getElementById('createTab').classList.add('active');
+    } else {
+      document.querySelector('.tab:nth-child(2)').classList.add('active');
+      document.getElementById('manageTab').classList.add('active');
       loadTests();
     }
+  }
 
-    function logout() {
-      sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('adminEmail');
-      authToken = null;
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('loginForm').reset();
-      document.getElementById('email').value = 'admin@bpsc.com';
-      document.getElementById('password').value = 'admin123';
-    }
+  // ─── FIXED: Create test – now sends 'phase' field ──────────────────
+  document.getElementById('createTestForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    // Tab switching
-    function switchTab(tab) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    const alertDiv = document.getElementById('createAlert');
+    const createBtn = document.getElementById('createBtnText');
+    const createLoader = document.getElementById('createLoader');
 
-      if (tab === 'create') {
-        document.querySelector('.tab:nth-child(1)').classList.add('active');
-        document.getElementById('createTab').classList.add('active');
+    alertDiv.innerHTML = '';
+    createBtn.classList.add('hidden');
+    createLoader.classList.remove('hidden');
+
+    try {
+      const title = document.getElementById('testTitle').value.trim();
+      const date = document.getElementById('testDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+      const questionCount = parseInt(document.getElementById('questionCount').value);
+      const testType = document.getElementById('testType').value;
+      const questionsText = document.getElementById('questionsJson').value.trim();
+
+      if (!testType) {
+        throw new Error('Please select Test Type (Paid or Free)');
+      }
+
+      let phase;
+      if (questionCount === 75) phase = "daily";
+      else if (questionCount === 100) phase = "gs";
+      else if (questionCount === 80) phase = "csat";
+      else throw new Error("Invalid question count selected");
+
+      let questions;
+      try {
+        questions = JSON.parse(questionsText);
+      } catch (err) {
+        throw new Error('Invalid JSON format. Please check syntax and commas.');
+      }
+
+      if (!Array.isArray(questions)) throw new Error('Questions must be a JSON array []');
+      if (questions.length !== questionCount) {
+        throw new Error(`Exactly ${questionCount} questions required (you provided ${questions.length})`);
+      }
+
+      const payload = {
+        title,
+        date,
+        startTime: startTime || undefined,
+        endTime: endTime || undefined,
+        questions,
+        testType,
+        phase                      // ← NEW: sending phase field
+      };
+
+      const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType.toUpperCase()} ${data.phaseDisplay || ''} test created successfully (${questionCount} questions) on ${date}</div>`;
+        document.getElementById('createTestForm').reset();
+        document.getElementById('testDate').valueAsDate = new Date();
+        document.getElementById('questionCount').value = "75";
+        document.getElementById('testType').value = "";
+        updateCreateButtonText();
+        setTimeout(() => {
+          alertDiv.innerHTML = '';
+          switchTab('manage');
+        }, 2800);
       } else {
-        document.querySelector('.tab:nth-child(2)').classList.add('active');
-        document.getElementById('manageTab').classList.add('active');
-        loadTests();
+        throw new Error(data.message || 'Creation failed');
       }
+    } catch (error) {
+      alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
+    } finally {
+      createBtn.classList.remove('hidden');
+      createLoader.classList.add('hidden');
     }
+  });
 
-    // Create test
-    document.getElementById('createTestForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-  
-      const alertDiv = document.getElementById('createAlert');
-      const createBtn = document.getElementById('createBtnText');
-      const createLoader = document.getElementById('createLoader');
-  
-      alertDiv.innerHTML = '';
-      createBtn.classList.add('hidden');
-      createLoader.classList.remove('hidden');
-  
-      try {
-        const title = document.getElementById('testTitle').value.trim();
-        const date = document.getElementById('testDate').value;
-        const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
-        const questionCount = parseInt(document.getElementById('questionCount').value);
-        const testType = document.getElementById('testType').value;
-        const questionsText = document.getElementById('questionsJson').value.trim();
-    
-        if (!testType) {
-          throw new Error('Please select Test Type (Paid or Free)');
-        }
+  // Load tests – updated to show phase clearly
+  async function loadTests() {
+    const testsDiv = document.getElementById('testsList');
+    testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>';
 
-        let questions;
-        try {
-          questions = JSON.parse(questionsText);
-        } catch (err) {
-          throw new Error('Invalid JSON format. Please check syntax and commas.');
-        }
-    
-        if (!Array.isArray(questions)) throw new Error('Questions must be a JSON array []');
-        if (questions.length !== questionCount) {
-          throw new Error(`Exactly ${questionCount} questions required (you provided ${questions.length})`);
-        }
-    
-        const payload = {
-          title,
-          date,
-          startTime: startTime || undefined,
-          endTime: endTime || undefined,
-          questions,
-          testType
-        };
-    
-        const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          },
-          body: JSON.stringify(payload)
-        });
+    try {
+      const response = await fetch(`${API_URL}/admin/tests`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Server error (${response.status})`);
-        }
+      if (!response.ok) throw new Error(`Server error (${response.status})`);
 
-        const data = await response.json();
-        if (data.success) {
-          alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType ? data.testType.toUpperCase() : 'Test'} "${title}" (${questionCount} questions) created successfully!</div>`;
-          document.getElementById('createTestForm').reset();
-          document.getElementById('testDate').valueAsDate = new Date();
-          document.getElementById('questionCount').value = "75";
-          document.getElementById('testType').value = "";
-          updateCreateButtonText();
-          setTimeout(() => {
-            alertDiv.innerHTML = '';
-            switchTab('manage');
-          }, 2800);
-        } else {
-          throw new Error(data.message || 'Creation failed');
-        }
-      } catch (error) {
-        alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
-      } finally {
-        createBtn.classList.remove('hidden');
-        createLoader.classList.add('hidden');
-      }
-    });
-
-    // Load tests list
-    async function loadTests() {
-      const testsDiv = document.getElementById('testsList');
-      testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>';
-  
-      try {
-        const response = await fetch(`${API_URL}/admin/tests`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-
-        if (!response.ok) throw new Error(`Server error (${response.status})`);
-
-        const data = await response.json();
-        if (data.success && data.tests?.length > 0) {
-          testsDiv.innerHTML = data.tests.map(test => `
-            <div class="test-item">
-              <div class="test-info">
-                <h3>${test.title}</h3>
-                <div class="test-meta">
-                  <span>📅 ${test.date}</span>
-                  <span>📝 ${test.totalQuestions || '?'} Questions</span>
-                  <span>🕐 ${test.startTimeIST ? new Date(test.startTimeIST).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : '—'}</span>
-                  <span style="font-weight:bold; color:${test.testType === 'paid' ? '#f59e0b' : '#10b981'}">
-                    ${test.testType === 'paid' ? 'PAID' : 'FREE'}
-                  </span>
-                </div>
+      const data = await response.json();
+      if (data.success && data.tests?.length > 0) {
+        testsDiv.innerHTML = data.tests.map(test => `
+          <div class="test-item">
+            <div class="test-info">
+              <h3>${test.title}</h3>
+              <div class="test-meta">
+                <span>📅 ${test.date}</span>
+                <span>📝 ${test.totalQuestions || '?'} Questions</span>
+                <span>🕐 ${test.startTimeIST ? new Date(test.startTimeIST).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : '—'}</span>
+                <span style="font-weight:bold; color:${test.testType === 'paid' ? '#f59e0b' : '#10b981'}">
+                  ${test.testType.toUpperCase()}
+                </span>
+                <span style="font-weight:bold; color:#60a5fa">
+                  ${test.phaseDisplay || '—'}
+                </span>
               </div>
-              <button class="btn btn-danger" onclick="deleteTest('${test._id}', '${test.title.replace(/'/g, "\\'")}')">Delete</button>
             </div>
-          `).join('');
-        } else {
-          testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">No tests found</p>';
-        }
-      } catch (error) {
-        testsDiv.innerHTML = `<p style="color:var(--danger); text-align:center;">Error: ${error.message}</p>`;
+            <button class="btn btn-danger" onclick="deleteTest('${test._id}', '${test.title.replace(/'/g, "\\'")}')">Delete</button>
+          </div>
+        `).join('');
+      } else {
+        testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">No tests found</p>';
       }
+    } catch (error) {
+      testsDiv.innerHTML = `<p style="color:var(--danger); text-align:center;">Error: ${error.message}</p>`;
     }
+  }
 
-    // Delete test
-    async function deleteTest(testId, testTitle) {
-      if (!confirm(`Delete "${testTitle}"? This action cannot be undone.`)) return;
-      const alertDiv = document.getElementById('manageAlert');
-      alertDiv.innerHTML = '';
-      try {
-        const response = await fetch(`${API_URL}/admin/delete-test/${testId}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Server error (${response.status})`);
-        }
-        const data = await response.json();
-        if (data.success) {
-          alertDiv.innerHTML = `<div class="alert alert-success">✓ "${testTitle}" deleted successfully</div>`;
-          loadTests();
-          setTimeout(() => alertDiv.innerHTML = '', 3000);
-        }
-      } catch (error) {
-        alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
+  async function deleteTest(testId, testTitle) {
+    if (!confirm(`Delete "${testTitle}"? This action cannot be undone.`)) return;
+    const alertDiv = document.getElementById('manageAlert');
+    alertDiv.innerHTML = '';
+    try {
+      const response = await fetch(`${API_URL}/admin/delete-test/${testId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
       }
+      const data = await response.json();
+      if (data.success) {
+        alertDiv.innerHTML = `<div class="alert alert-success">✓ "${testTitle}" deleted successfully</div>`;
+        loadTests();
+        setTimeout(() => alertDiv.innerHTML = '', 3000);
+      }
+    } catch (error) {
+      alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
     }
-  </script>
+  }
+</script>
 </body>
 </html>
