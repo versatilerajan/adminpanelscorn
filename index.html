@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BPSC Admin Panel</title>
+  <title>Cron Admin Panel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -128,6 +128,7 @@
     @keyframes spin { to {transform:rotate(360deg);} }
     .hidden { display:none !important; }
     .question-count-selector, .test-type-selector { margin-bottom:1.5rem; }
+    .question-hint { font-size:0.8rem; color:#94a3b8; margin-top:0.5rem; line-height:1.5; }
     @media (max-width:768px) {
       .header { flex-direction:column; align-items:flex-start; gap:1rem; }
       .header-title { font-size:2rem; }
@@ -142,22 +143,22 @@
   <!-- Login Screen -->
   <div id="loginScreen" class="login-screen">
     <div class="login-box">
-      <h1 class="login-title">BPSC</h1>
+      <h1 class="login-title">Cron</h1>
       <p class="login-subtitle">Admin Control Panel</p>
-   
+  
       <div id="loginError" class="alert alert-error hidden"></div>
-   
+  
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" value="admin@bpsc.com" required autocomplete="email">
         </div>
-     
+    
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" value="admin123" required autocomplete="current-password">
         </div>
-     
+    
         <button type="submit" class="btn btn-primary">
           <span id="loginBtnText">Access Panel</span>
           <span id="loginLoader" class="loading hidden"></span>
@@ -185,43 +186,49 @@
       <!-- Create Test Tab -->
       <div id="createTab" class="tab-content active">
         <div class="card">
-          <h2 class="card-title">Create New Daily Test</h2>
-       
+          <h2 class="card-title">Create New Test</h2>
+      
           <div id="createAlert"></div>
 
           <form id="createTestForm">
             <div class="grid">
               <div class="form-group">
                 <label for="testTitle">Test Title</label>
-                <input type="text" id="testTitle" placeholder="e.g., BPSC Daily Test - February 12, 2026" required autofocus>
+                <input type="text" id="testTitle" placeholder="e.g., UPSC Prelims Mock - GS + CSAT - Feb 15" required autofocus>
               </div>
-           
+          
               <div class="form-group">
                 <label for="testDate">Test Date (YYYY-MM-DD)</label>
                 <input type="date" id="testDate" required>
               </div>
-           
+          
               <div class="form-group">
                 <label for="startTime">Start Time (IST)</label>
                 <input type="datetime-local" id="startTime">
               </div>
-           
+          
               <div class="form-group">
                 <label for="endTime">End Time (IST)</label>
                 <input type="datetime-local" id="endTime">
               </div>
             </div>
 
-            <!-- Question Count Selector -->
+            <!-- Question Count Selector – Updated with 75 / 100 / 80 -->
             <div class="question-count-selector form-group">
               <label for="questionCount">Number of Questions</label>
               <select id="questionCount" required>
-                <option value="50" selected>Monday–Saturday — 50 questions</option>
-                <option value="150">Sunday — 150 questions</option>
+                <option value="75" selected>Daily Test (Mon–Sat) — 75 questions</option>
+                <option value="100">Sunday GS Paper — 100 questions</option>
+                <option value="80">Sunday CSAT Paper — 80 questions</option>
               </select>
+              <div class="question-hint">
+                • Use <strong>75</strong> for regular weekday tests<br>
+                • Use <strong>100</strong> when creating GS Paper only (Sunday Phase 1)<br>
+                • Use <strong>80</strong> when creating CSAT Paper only (Sunday Phase 2)
+              </div>
             </div>
 
-            <!-- NEW: Test Type Selector (Paid or Free) -->
+            <!-- Test Type Selector -->
             <div class="test-type-selector form-group">
               <label for="testType">Test Type</label>
               <select id="testType" required>
@@ -230,11 +237,11 @@
                 <option value="free">Free Test (public, no login needed)</option>
               </select>
             </div>
-         
+        
             <div class="form-group">
               <label for="questionsJson">Questions (JSON Array — must match selected count)</label>
               <textarea id="questionsJson" placeholder='Paste your JSON array here...' required></textarea>
-           
+          
               <div class="code-hint">
                 <strong>Expected JSON format (array of objects):</strong><br>
                 [<br>
@@ -249,12 +256,12 @@
                 &nbsp;&nbsp;},<br>
                 &nbsp;&nbsp;...<br>
                 ]<br><br>
-                <strong>Important:</strong> Number of objects must exactly match the selected count above (50 or 150).
+                <strong>Important:</strong> Number of objects must exactly match the selected count (75 / 100 / 80).
               </div>
             </div>
-         
+        
             <button type="submit" class="btn btn-success" id="createBtn">
-              <span id="createBtnText">Create Test (50 questions)</span>
+              <span id="createBtnText">Create Test (75 questions)</span>
               <span id="createLoader" class="loading hidden"></span>
             </button>
           </form>
@@ -265,9 +272,9 @@
       <div id="manageTab" class="tab-content">
         <div class="card">
           <h2 class="card-title">Existing Tests</h2>
-       
+      
           <div id="manageAlert"></div>
-       
+      
           <div id="testsList" class="test-list">
             <p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>
           </div>
@@ -277,15 +284,15 @@
   </div>
 
   <script>
-    const API_URL = 'https://cronadminbackend.vercel.app';
+    const API_URL = 'https://cronadminbackend.vercel.app'; // ← change if needed
     let authToken = null;
 
-    // Update button text dynamically when question count or test type changes
+    // Update button text when question count or test type changes
     function updateCreateButtonText() {
       const count = document.getElementById('questionCount').value;
       const type = document.getElementById('testType').value;
       let typeText = type === 'paid' ? 'Paid' : type === 'free' ? 'Free' : '';
-      document.getElementById('createBtnText').textContent = 
+      document.getElementById('createBtnText').textContent =
         `Create ${typeText ? typeText + ' ' : ''}Test (${count} questions)`;
     }
 
@@ -295,14 +302,14 @@
     // Login
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-   
+  
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-   
+
       const loginBtn = document.getElementById('loginBtnText');
       const loginLoader = document.getElementById('loginLoader');
       const errorDiv = document.getElementById('loginError');
-   
+
       loginBtn.classList.add('hidden');
       loginLoader.classList.remove('hidden');
       errorDiv.classList.add('hidden');
@@ -371,7 +378,7 @@
     function switchTab(tab) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-   
+
       if (tab === 'create') {
         document.querySelector('.tab:nth-child(1)').classList.add('active');
         document.getElementById('createTab').classList.add('active');
@@ -382,18 +389,18 @@
       }
     }
 
-    // Create test – now includes testType
+    // Create test
     document.getElementById('createTestForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-   
+  
       const alertDiv = document.getElementById('createAlert');
       const createBtn = document.getElementById('createBtnText');
       const createLoader = document.getElementById('createLoader');
-   
+  
       alertDiv.innerHTML = '';
       createBtn.classList.add('hidden');
       createLoader.classList.remove('hidden');
-   
+  
       try {
         const title = document.getElementById('testTitle').value.trim();
         const date = document.getElementById('testDate').value;
@@ -402,7 +409,7 @@
         const questionCount = parseInt(document.getElementById('questionCount').value);
         const testType = document.getElementById('testType').value;
         const questionsText = document.getElementById('questionsJson').value.trim();
-     
+    
         if (!testType) {
           throw new Error('Please select Test Type (Paid or Free)');
         }
@@ -413,21 +420,21 @@
         } catch (err) {
           throw new Error('Invalid JSON format. Please check syntax and commas.');
         }
-     
+    
         if (!Array.isArray(questions)) throw new Error('Questions must be a JSON array []');
         if (questions.length !== questionCount) {
           throw new Error(`Exactly ${questionCount} questions required (you provided ${questions.length})`);
         }
-     
+    
         const payload = {
           title,
           date,
           startTime: startTime || undefined,
           endTime: endTime || undefined,
           questions,
-          testType   // ← NEW: "paid" or "free"
+          testType
         };
-     
+    
         const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
           method: 'POST',
           headers: {
@@ -447,7 +454,7 @@
           alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType ? data.testType.toUpperCase() : 'Test'} "${title}" (${questionCount} questions) created successfully!</div>`;
           document.getElementById('createTestForm').reset();
           document.getElementById('testDate').valueAsDate = new Date();
-          document.getElementById('questionCount').value = "50";
+          document.getElementById('questionCount').value = "75";
           document.getElementById('testType').value = "";
           updateCreateButtonText();
           setTimeout(() => {
@@ -465,11 +472,11 @@
       }
     });
 
-    // Load tests list – now shows testType
+    // Load tests list
     async function loadTests() {
       const testsDiv = document.getElementById('testsList');
       testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>';
-   
+  
       try {
         const response = await fetch(`${API_URL}/admin/tests`, {
           headers: { 'Authorization': `Bearer ${authToken}` }
@@ -506,21 +513,17 @@
     // Delete test
     async function deleteTest(testId, testTitle) {
       if (!confirm(`Delete "${testTitle}"? This action cannot be undone.`)) return;
-
       const alertDiv = document.getElementById('manageAlert');
       alertDiv.innerHTML = '';
-
       try {
         const response = await fetch(`${API_URL}/admin/delete-test/${testId}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
-
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
           throw new Error(errData.message || `Server error (${response.status})`);
         }
-
         const data = await response.json();
         if (data.success) {
           alertDiv.innerHTML = `<div class="alert alert-success">✓ "${testTitle}" deleted successfully</div>`;
