@@ -55,88 +55,110 @@
     .login-title { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; margin-bottom:0.5rem; color:var(--accent); letter-spacing:-1px; }
     .login-subtitle { color:var(--text-secondary); margin-bottom:2rem; font-size:0.875rem; text-transform:uppercase; letter-spacing:2px; }
     .form-group { margin-bottom:1.5rem; }
-    label { display:block; margin-bottom:0.4rem; color:var(--text-secondary); font-size:0.78rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
-    input[type="email"], input[type="password"], input[type="text"], input[type="date"], input[type="datetime-local"], textarea, select {
-      width:100%; padding:0.85rem 1rem;
-      background:var(--secondary); border:1px solid var(--border); border-radius:3px;
-      color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.9rem; transition:all 0.2s;
+    label { display:block; margin-bottom:0.5rem; color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+    input[type="email"], input[type="password"], input[type="text"], input[type="date"], textarea, select {
+      width:100%; padding:0.875rem 1rem;
+      background:var(--secondary); border:1px solid var(--border); border-radius:2px;
+      color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.875rem; transition:all 0.2s;
     }
-    input:focus, textarea:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(245,158,11,0.12); }
-    textarea { min-height:420px; font-size:0.82rem; line-height:1.5; resize:vertical; }
+    input:focus, textarea:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(245,158,11,0.1); }
+    textarea { min-height:400px; font-size:0.8rem; line-height:1.6; resize:vertical; }
     .btn {
-      padding:0.9rem 2.2rem; border:none; border-radius:3px;
-      font-family:'JetBrains Mono',monospace; font-weight:600; font-size:0.9rem;
-      text-transform:uppercase; letter-spacing:1.1px; cursor:pointer; transition:all 0.3s;
+      padding:0.875rem 2rem; border:none; border-radius:2px;
+      font-family:'JetBrains Mono',monospace; font-weight:600; font-size:0.875rem;
+      text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.3s;
       position:relative; overflow:hidden;
     }
     .btn::before {
       content:''; position:absolute; top:50%; left:50%; width:0; height:0; border-radius:50%;
-      background:rgba(255,255,255,0.12); transform:translate(-50%,-50%);
-      transition:width 0.7s, height 0.7s;
+      background:rgba(255,255,255,0.1); transform:translate(-50%,-50%);
+      transition:width 0.6s, height 0.6s;
     }
-    .btn:hover::before { width:360px; height:360px; }
+    .btn:hover::before { width:300px; height:300px; }
     .btn-primary { background:var(--accent); color:var(--primary); width:100%; }
-    .btn-primary:hover { background:#d97706; transform:translateY(-1px); }
+    .btn-primary:hover { background:#d97706; transform:translateY(-2px); box-shadow:0 10px 20px rgba(245,158,11,0.3); }
     .btn-secondary { background:var(--secondary); color:var(--text); border:1px solid var(--border); }
+    .btn-secondary:hover { background:var(--border); }
     .btn-danger { background:var(--danger); color:white; }
+    .btn-danger:hover { background:#dc2626; }
     .btn-success { background:var(--success); color:white; }
+    .btn-success:hover { background:#059669; }
     .dashboard { display:none; }
-    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:3rem; padding-bottom:1.8rem; border-bottom:2px solid var(--border); }
-    .header-title { font-family:'Playfair Display',serif; font-size:3.1rem; font-weight:900; color:var(--accent); letter-spacing:-2.2px; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:3rem; padding-bottom:2rem; border-bottom:2px solid var(--border); }
+    .header-title { font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--accent); letter-spacing:-2px; }
     .header-info { text-align:right; }
-    .user-email { color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.6rem; }
-    .tabs { display:flex; gap:1.2rem; margin-bottom:2.2rem; border-bottom:2px solid var(--border); }
+    .user-email { color:var(--text-secondary); font-size:0.875rem; margin-bottom:0.5rem; }
+    .tabs { display:flex; gap:1rem; margin-bottom:2rem; border-bottom:2px solid var(--border); }
     .tab {
-      padding:1rem 2.2rem; background:transparent; border:none;
-      color:var(--text-secondary); font-weight:600; font-size:0.9rem;
-      text-transform:uppercase; letter-spacing:1.2px; cursor:pointer; transition:all 0.3s; position:relative;
+      padding:1rem 2rem; background:transparent; border:none;
+      color:var(--text-secondary); font-family:'JetBrains Mono',monospace; font-weight:600; font-size:0.875rem;
+      text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.3s; position:relative;
     }
-    .tab::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2.5px; background:var(--accent); transition:width 0.3s; }
+    .tab::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:var(--accent); transition:width 0.3s; }
     .tab:hover { color:var(--text); }
     .tab.active { color:var(--accent); }
     .tab.active::after { width:100%; }
     .tab-content { display:none; animation:fadeIn 0.5s ease; }
     .tab-content.active { display:block; }
-    @keyframes fadeIn { from {opacity:0; transform:translateY(12px);} to {opacity:1; transform:translateY(0);} }
-    .card { background:var(--bg-overlay); border:2px solid var(--border); border-radius:4px; padding:2.2rem; margin-bottom:2.2rem; backdrop-filter:blur(10px); }
-    .card-title { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:700; margin-bottom:1.6rem; color:var(--accent); }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.6rem; }
-    .alert { padding:1rem 1.6rem; border-radius:3px; margin-bottom:1.6rem; font-size:0.9rem; animation:slideDown 0.3s ease; }
-    @keyframes slideDown { from {opacity:0; transform:translateY(-12px);} to {opacity:1; transform:translateY(0);} }
-    .alert-success { background:rgba(16,185,129,0.12); border:1px solid var(--success); color:var(--success); }
-    .alert-error { background:rgba(239,68,68,0.12); border:1px solid var(--danger); color:var(--danger); }
-    .time-preview { font-size:0.82rem; color:#94a3b8; margin-top:0.5rem; line-height:1.4; }
-    .time-preview strong { color:var(--accent); }
-    .question-hint, .time-hint {
-      font-size:0.82rem; color:#94a3b8; margin-top:0.6rem; line-height:1.5;
+    @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+    .card { background:var(--bg-overlay); border:2px solid var(--border); border-radius:4px; padding:2rem; margin-bottom:2rem; backdrop-filter:blur(10px); }
+    .card-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; margin-bottom:1.5rem; color:var(--accent); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
+    .alert { padding:1rem 1.5rem; border-radius:2px; margin-bottom:1.5rem; font-size:0.875rem; animation:slideDown 0.3s ease; }
+    @keyframes slideDown { from {opacity:0; transform:translateY(-10px);} to {opacity:1; transform:translateY(0);} }
+    .alert-success { background:rgba(16,185,129,0.1); border:1px solid var(--success); color:var(--success); }
+    .alert-error { background:rgba(239,68,68,0.1); border:1px solid var(--danger); color:var(--danger); }
+    .test-list { display:flex; flex-direction:column; gap:1rem; }
+    .test-item {
+      background:var(--secondary); border:1px solid var(--border); padding:1.5rem; border-radius:2px;
+      display:flex; justify-content:space-between; align-items:center; transition:all 0.3s;
     }
-    .time-hint { font-style:italic; }
+    .test-item:hover { border-color:var(--accent); transform:translateX(5px); }
+    .test-info h3 { color:var(--text); margin-bottom:0.5rem; font-size:1.125rem; }
+    .test-meta { color:var(--text-secondary); font-size:0.75rem; display:flex; gap:1rem; flex-wrap:wrap; }
+    .code-hint, .full-day-hint {
+      background:var(--secondary); border:1px solid var(--border); border-left:4px solid var(--accent);
+      padding:1rem; margin-top:1rem; font-size:0.75rem; line-height:1.6; color:var(--text-secondary);
+    }
+    .loading {
+      display:inline-block; width:16px; height:16px;
+      border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin { to {transform:rotate(360deg);} }
+    .hidden { display:none !important; }
+    .question-count-selector, .test-type-selector { margin-bottom:1.5rem; }
+    .question-hint { font-size:0.8rem; color:#94a3b8; margin-top:0.5rem; line-height:1.5; }
     @media (max-width:768px) {
-      .header { flex-direction:column; align-items:flex-start; gap:1.2rem; }
-      .header-title { font-size:2.4rem; }
-      .tabs { overflow-x:auto; }
-      .tab { padding:0.9rem 1.6rem; }
+      .header { flex-direction:column; align-items:flex-start; gap:1rem; }
+      .header-title { font-size:2rem; }
+      .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .tab { padding:0.875rem 1.5rem; white-space:nowrap; }
       .grid { grid-template-columns:1fr; }
+      .test-item { flex-direction:column; align-items:flex-start; gap:1rem; }
     }
   </style>
 </head>
 <body>
-
   <!-- Login Screen -->
   <div id="loginScreen" class="login-screen">
     <div class="login-box">
       <h1 class="login-title">Cron</h1>
       <p class="login-subtitle">Admin Control Panel</p>
+ 
       <div id="loginError" class="alert alert-error hidden"></div>
+ 
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" value="admin@bpsc.com" required autocomplete="email">
         </div>
+   
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" value="admin123" required autocomplete="current-password">
         </div>
+   
         <button type="submit" class="btn btn-primary">
           <span id="loginBtnText">Access Panel</span>
           <span id="loginLoader" class="loading hidden"></span>
@@ -155,7 +177,6 @@
           <button class="btn btn-secondary" onclick="logout()">Logout</button>
         </div>
       </div>
-
       <div class="tabs">
         <button class="tab active" onclick="switchTab('create')">Create Test</button>
         <button class="tab" onclick="switchTab('manage')">Manage Tests</button>
@@ -165,30 +186,21 @@
       <div id="createTab" class="tab-content active">
         <div class="card">
           <h2 class="card-title">Create New Test</h2>
+     
           <div id="createAlert"></div>
-
           <form id="createTestForm">
-           <div class="grid">
-         <div class="form-group">
-              <label for="testTitle">Test Title</label>
-              <input type="text" id="testTitle" placeholder="e.g. BPSC Prelims Mock – 15 Feb" required autofocus>
-             </div>
-
-            <div class="form-group">
-          <label for="testDate">Test Date (YYYY-MM-DD)</label>
-            <input type="date" id="testDate" required>
-               <div class="time-hint" style="margin-top:0.6rem; font-size:0.82rem; color:#94a3b8;">
-               The test will automatically run full day:<br>
-                   <strong>00:00:00 IST – 23:59:59 IST</strong> on the selected date
-              </div>
-           </div>
-           </div>
-
+            <div class="grid">
               <div class="form-group">
-                <label for="endTime">End Time (IST) – optional</label>
-                <input type="datetime-local" id="endTime">
-                <div class="time-preview">
-                  Leave empty → test ends at <strong>23:59 IST</strong> on selected date
+                <label for="testTitle">Test Title</label>
+                <input type="text" id="testTitle" placeholder="e.g., UPSC Prelims Mock - GS + CSAT - Feb 15" required autofocus>
+              </div>
+         
+              <div class="form-group">
+                <label for="testDate">Test Date (YYYY-MM-DD)</label>
+                <input type="date" id="testDate" required>
+                <div class="full-day-hint">
+                  The test will be available full day:<br>
+                  <strong>00:00 IST – 23:59 IST</strong> on the selected date
                 </div>
               </div>
             </div>
@@ -201,34 +213,43 @@
                 <option value="80">Sunday CSAT Paper — 80 questions</option>
               </select>
               <div class="question-hint">
-                • 75 → regular daily test (GS only)<br>
-                • 100 → GS paper (Sunday full test – phase 1)<br>
-                • 80 → CSAT paper (Sunday full test – phase 2)
+                • Use <strong>75</strong> for regular weekday tests<br>
+                • Use <strong>100</strong> when creating GS Paper only (Sunday Phase 1)<br>
+                • Use <strong>80</strong> when creating CSAT Paper only (Sunday Phase 2)
               </div>
             </div>
 
             <div class="test-type-selector form-group">
               <label for="testType">Test Type</label>
               <select id="testType" required>
-                <option value="" disabled selected>Select access type</option>
-                <option value="paid">Paid Test (login required)</option>
-                <option value="free">Free Practice Test (public)</option>
+                <option value="" disabled selected>Select test access type</option>
+                <option value="paid">Paid Test (requires login)</option>
+                <option value="free">Free Test (public, no login needed)</option>
               </select>
             </div>
-
+       
             <div class="form-group">
-              <label for="questionsJson">Questions (JSON Array)</label>
-              <textarea id="questionsJson" placeholder='[{ "questionNumber":1, "questionStatement":"...", "options":{...}, "correctOption":"option1" }, ...]' required></textarea>
+              <label for="questionsJson">Questions (JSON Array — must match selected count)</label>
+              <textarea id="questionsJson" placeholder='Paste your JSON array here...' required></textarea>
+         
               <div class="code-hint">
-                <strong>Format:</strong> array of objects with exactly the number of questions selected above.<br><br>
-                <strong>Required fields per question:</strong><br>
-                • questionNumber (number)<br>
-                • questionStatement (string)<br>
-                • options (object with option1–option4)<br>
-                • correctOption ("option1" | "option2" | "option3" | "option4")
+                <strong>Expected JSON format (array of objects):</strong><br>
+                [<br>
+                &nbsp;&nbsp;{<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"questionNumber": 1,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"questionStatement": "What is the capital of Bihar?",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"options": {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option1": "Patna",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"option2": "Gaya", ...<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"correctOption": "option1"<br>
+                &nbsp;&nbsp;},<br>
+                &nbsp;&nbsp;...<br>
+                ]<br><br>
+                <strong>Important:</strong> Number of objects must exactly match the selected count (75 / 100 / 80).
               </div>
             </div>
-
+       
             <button type="submit" class="btn btn-success" id="createBtn">
               <span id="createBtnText">Create Test (75 questions)</span>
               <span id="createLoader" class="loading hidden"></span>
@@ -241,7 +262,9 @@
       <div id="manageTab" class="tab-content">
         <div class="card">
           <h2 class="card-title">Existing Tests</h2>
+     
           <div id="manageAlert"></div>
+     
           <div id="testsList" class="test-list">
             <p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>
           </div>
@@ -251,246 +274,245 @@
   </div>
 
 <script>
-// ────────────────────────────────────────────────
-const API_URL = 'https://cronadminbackend.vercel.app'; // ← your actual backend URL
-let authToken = null;
+  const API_URL = 'https://cronadminbackend.vercel.app'; // your backend URL
+  let authToken = null;
 
-// Dynamic button text
-function updateCreateButtonText() {
-  const count = document.getElementById('questionCount').value;
-  const type = document.getElementById('testType').value;
-  const typeText = type ? (type === 'paid' ? 'Paid' : 'Free') : '';
-  document.getElementById('createBtnText').textContent =
-    `Create ${typeText ? typeText + ' ' : ''}Test (${count} questions)`;
-}
-
-document.getElementById('questionCount').addEventListener('change', updateCreateButtonText);
-document.getElementById('testType').addEventListener('change', updateCreateButtonText);
-
-// Login
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  // ... (login logic remains the same as your original)
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const loginBtn = document.getElementById('loginBtnText');
-  const loginLoader = document.getElementById('loginLoader');
-  const errorDiv = document.getElementById('loginError');
-
-  loginBtn.classList.add('hidden');
-  loginLoader.classList.remove('hidden');
-  errorDiv.classList.add('hidden');
-
-  try {
-    const res = await fetch(`${API_URL}/admin/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    if (!res.ok) throw new Error((await res.json())?.message || `HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.success && data.token) {
-      authToken = data.token;
-      sessionStorage.setItem('authToken', authToken);
-      sessionStorage.setItem('adminEmail', email);
-      showDashboard();
-    } else {
-      throw new Error(data.message || 'Login failed');
-    }
-  } catch (err) {
-    errorDiv.textContent = err.message;
-    errorDiv.classList.remove('hidden');
-  } finally {
-    loginBtn.classList.remove('hidden');
-    loginLoader.classList.add('hidden');
-  }
-});
-
-// Auto-login + defaults
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = sessionStorage.getItem('authToken');
-  if (saved) {
-    authToken = saved;
-    showDashboard();
+  function updateCreateButtonText() {
+    const count = document.getElementById('questionCount').value;
+    const type = document.getElementById('testType').value;
+    let typeText = type === 'paid' ? 'Paid' : type === 'free' ? 'Free' : '';
+    document.getElementById('createBtnText').textContent =
+      `Create ${typeText ? typeText + ' ' : ''}Test (${count} questions)`;
   }
 
-  // Default to **tomorrow** instead of today
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  document.getElementById('testDate').valueAsDate = tomorrow;
+  document.getElementById('questionCount').addEventListener('change', updateCreateButtonText);
+  document.getElementById('testType').addEventListener('change', updateCreateButtonText);
 
-  updateCreateButtonText();
-});
-
-function showDashboard() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('userEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@bpsc.com';
-  loadTests();
-}
-
-function logout() {
-  sessionStorage.clear();
-  authToken = null;
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('loginForm').reset();
-  document.getElementById('email').value = 'admin@bpsc.com';
-  document.getElementById('password').value = 'admin123';
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
-  document.getElementById(`${tab}Tab`).classList.add('active');
-  if (tab === 'manage') loadTests();
-}
-
-// Create test
-document.getElementById('createTestForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const alertDiv = document.getElementById('createAlert');
-  alertDiv.innerHTML = '';
-  const btnText = document.getElementById('createBtnText');
-  const loader = document.getElementById('createLoader');
-  btnText.classList.add('hidden');
-  loader.classList.remove('hidden');
-
-  try {
-    const title       = document.getElementById('testTitle').value.trim();
-    const date        = document.getElementById('testDate').value;
-    const startTime   = document.getElementById('startTime').value;
-    const endTime     = document.getElementById('endTime').value;
-    const questionCount = parseInt(document.getElementById('questionCount').value);
-    const testType    = document.getElementById('testType').value;
-    const questionsRaw = document.getElementById('questionsJson').value.trim();
-
-    if (!testType) throw new Error("Please select Paid or Free");
-
-    let phase;
-    if      (questionCount === 75)  phase = "daily";
-    else if (questionCount === 100) phase = "gs";
-    else if (questionCount === 80)  phase = "csat";
-    else throw new Error("Invalid question count");
-
-    let questions;
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtnText');
+    const loginLoader = document.getElementById('loginLoader');
+    const errorDiv = document.getElementById('loginError');
+    loginBtn.classList.add('hidden');
+    loginLoader.classList.remove('hidden');
+    errorDiv.classList.add('hidden');
+    errorDiv.textContent = '';
     try {
-      questions = JSON.parse(questionsRaw);
-    } catch {
-      throw new Error("Invalid JSON – check syntax");
+      const response = await fetch(`${API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
+      }
+      const data = await response.json();
+      if (data.success && data.token) {
+        authToken = data.token;
+        sessionStorage.setItem('authToken', authToken);
+        sessionStorage.setItem('adminEmail', email);
+        showDashboard();
+      } else {
+        throw new Error(data.message || 'Login failed');
+      }
+    } catch (error) {
+      errorDiv.textContent = error.message || 'Failed to connect to server';
+      errorDiv.classList.remove('hidden');
+    } finally {
+      loginBtn.classList.remove('hidden');
+      loginLoader.classList.add('hidden');
     }
+  });
 
-    if (!Array.isArray(questions) || questions.length !== questionCount) {
-      throw new Error(`Must provide exactly ${questionCount} questions`);
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedToken = sessionStorage.getItem('authToken');
+    if (savedToken) {
+      authToken = savedToken;
+      showDashboard();
     }
-
-    const payload = {
-      title,
-      date,
-      startTime: startTime || undefined,
-      endTime:   endTime   || undefined,
-      questions,
-      testType,
-      phase
-    };
-
-    const res = await fetch(`${API_URL}/admin/create-test-with-questions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `HTTP ${res.status}`);
-    }
-
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message || "Creation failed");
-
-    alertDiv.innerHTML = `<div class="alert alert-success">Test created successfully → ${data.startTimeIST ? new Date(data.startTimeIST).toLocaleString('en-IN') : '00:00 IST'} – ${data.endTimeIST ? new Date(data.endTimeIST).toLocaleString('en-IN') : '23:59 IST'}</div>`;
-
-    document.getElementById('createTestForm').reset();
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById('testDate').valueAsDate = tomorrow;
-    document.getElementById('questionCount').value = "75";
-    document.getElementById('testType').value = "";
+    // Default to today (you can change to tomorrow if preferred)
+    document.getElementById('testDate').valueAsDate = new Date();
     updateCreateButtonText();
+  });
 
-    setTimeout(() => {
-      alertDiv.innerHTML = '';
-      switchTab('manage');
-    }, 3200);
-
-  } catch (err) {
-    alertDiv.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
-  } finally {
-    btnText.classList.remove('hidden');
-    loader.classList.add('hidden');
+  function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('userEmail').textContent = sessionStorage.getItem('adminEmail') || 'admin@bpsc.com';
+    loadTests();
   }
-});
 
-// Load & delete tests (unchanged logic, slightly cleaner template)
-async function loadTests() {
-  const container = document.getElementById('testsList');
-  container.innerHTML = '<p style="text-align:center; color:var(--text-secondary);">Loading...</p>';
-
-  try {
-    const res = await fetch(`${API_URL}/admin/tests`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const { success, tests } = await res.json();
-
-    if (!success || !tests?.length) {
-      container.innerHTML = '<p style="text-align:center; color:var(--text-secondary);">No tests found</p>';
-      return;
-    }
-
-    container.innerHTML = tests.map(t => `
-      <div class="test-item">
-        <div class="test-info">
-          <h3>${t.title}</h3>
-          <div class="test-meta">
-            <span>📅 ${t.date}</span>
-            <span>📝 ${t.totalQuestions || '?'} q</span>
-            <span>🕐 ${t.startTimeIST ? new Date(t.startTimeIST).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '00:00'} – ${t.endTimeIST ? new Date(t.endTimeIST).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '23:59'}</span>
-            <span style="color:${t.testType==='paid'?'#f59e0b':'#10b981'}">${t.testType.toUpperCase()}</span>
-            <span style="color:#60a5fa">${t.phaseDisplay || '—'}</span>
-          </div>
-        </div>
-        <button class="btn btn-danger" onclick="deleteTest('${t._id}','${t.title.replace(/'/g,"\\'")}')">Delete</button>
-      </div>
-    `).join('');
-  } catch (err) {
-    container.innerHTML = `<p style="color:var(--danger); text-align:center;">Error: ${err.message}</p>`;
+  function logout() {
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('adminEmail');
+    authToken = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginForm').reset();
+    document.getElementById('email').value = 'admin@bpsc.com';
+    document.getElementById('password').value = 'admin123';
   }
-}
 
-async function deleteTest(id, title) {
-  if (!confirm(`Delete "${title}"?`)) return;
-  const alertDiv = document.getElementById('manageAlert');
-  try {
-    const res = await fetch(`${API_URL}/admin/delete-test/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${authToken}` }
-    });
-    if (!res.ok) throw new Error((await res.json())?.message || `HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.success) {
-      alertDiv.innerHTML = `<div class="alert alert-success">"${title}" deleted</div>`;
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    if (tab === 'create') {
+      document.querySelector('.tab:nth-child(1)').classList.add('active');
+      document.getElementById('createTab').classList.add('active');
+    } else {
+      document.querySelector('.tab:nth-child(2)').classList.add('active');
+      document.getElementById('manageTab').classList.add('active');
       loadTests();
-      setTimeout(() => alertDiv.innerHTML='', 2800);
     }
-  } catch (err) {
-    alertDiv.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
   }
-}
+
+  document.getElementById('createTestForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const alertDiv = document.getElementById('createAlert');
+    const createBtn = document.getElementById('createBtnText');
+    const createLoader = document.getElementById('createLoader');
+    alertDiv.innerHTML = '';
+    createBtn.classList.add('hidden');
+    createLoader.classList.remove('hidden');
+
+    try {
+      const title = document.getElementById('testTitle').value.trim();
+      const date = document.getElementById('testDate').value;
+      const questionCount = parseInt(document.getElementById('questionCount').value);
+      const testType = document.getElementById('testType').value;
+      const questionsText = document.getElementById('questionsJson').value.trim();
+
+      if (!testType) {
+        throw new Error('Please select Test Type (Paid or Free)');
+      }
+
+      let phase;
+      if (questionCount === 75) phase = "daily";
+      else if (questionCount === 100) phase = "gs";
+      else if (questionCount === 80) phase = "csat";
+      else throw new Error("Invalid question count selected");
+
+      let questions;
+      try {
+        questions = JSON.parse(questionsText);
+      } catch (err) {
+        throw new Error('Invalid JSON format. Please check syntax and commas.');
+      }
+
+      if (!Array.isArray(questions)) throw new Error('Questions must be a JSON array []');
+      if (questions.length !== questionCount) {
+        throw new Error(`Exactly ${questionCount} questions required (you provided ${questions.length})`);
+      }
+
+      const payload = {
+        title,
+        date,
+        // No startTime / endTime → backend will set full day automatically
+        questions,
+        testType,
+        phase
+      };
+
+      const response = await fetch(`${API_URL}/admin/create-test-with-questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        alertDiv.innerHTML = `<div class="alert alert-success">✓ ${data.testType.toUpperCase()} ${data.phaseDisplay || ''} test created successfully (${questionCount} questions) on ${date}<br>Full day: 00:00 – 23:59 IST</div>`;
+        document.getElementById('createTestForm').reset();
+        document.getElementById('testDate').valueAsDate = new Date();
+        document.getElementById('questionCount').value = "75";
+        document.getElementById('testType').value = "";
+        updateCreateButtonText();
+        setTimeout(() => {
+          alertDiv.innerHTML = '';
+          switchTab('manage');
+        }, 3200);
+      } else {
+        throw new Error(data.message || 'Creation failed');
+      }
+    } catch (error) {
+      alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
+    } finally {
+      createBtn.classList.remove('hidden');
+      createLoader.classList.add('hidden');
+    }
+  });
+
+  async function loadTests() {
+    const testsDiv = document.getElementById('testsList');
+    testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">Loading tests...</p>';
+    try {
+      const response = await fetch(`${API_URL}/admin/tests`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      if (!response.ok) throw new Error(`Server error (${response.status})`);
+      const data = await response.json();
+      if (data.success && data.tests?.length > 0) {
+        testsDiv.innerHTML = data.tests.map(test => `
+          <div class="test-item">
+            <div class="test-info">
+              <h3>${test.title}</h3>
+              <div class="test-meta">
+                <span>📅 ${test.date}</span>
+                <span>📝 ${test.totalQuestions || '?'} Questions</span>
+                <span>🕐 Full day (00:00 – 23:59 IST)</span>
+                <span style="font-weight:bold; color:${test.testType === 'paid' ? '#f59e0b' : '#10b981'}">
+                  ${test.testType.toUpperCase()}
+                </span>
+                <span style="font-weight:bold; color:#60a5fa">
+                  ${test.phaseDisplay || '—'}
+                </span>
+              </div>
+            </div>
+            <button class="btn btn-danger" onclick="deleteTest('${test._id}', '${test.title.replace(/'/g, "\\'")}')">Delete</button>
+          </div>
+        `).join('');
+      } else {
+        testsDiv.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">No tests found</p>';
+      }
+    } catch (error) {
+      testsDiv.innerHTML = `<p style="color:var(--danger); text-align:center;">Error: ${error.message}</p>`;
+    }
+  }
+
+  async function deleteTest(testId, testTitle) {
+    if (!confirm(`Delete "${testTitle}"? This action cannot be undone.`)) return;
+    const alertDiv = document.getElementById('manageAlert');
+    alertDiv.innerHTML = '';
+    try {
+      const response = await fetch(`${API_URL}/admin/delete-test/${testId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Server error (${response.status})`);
+      }
+      const data = await response.json();
+      if (data.success) {
+        alertDiv.innerHTML = `<div class="alert alert-success">✓ "${testTitle}" deleted successfully</div>`;
+        loadTests();
+        setTimeout(() => alertDiv.innerHTML = '', 3000);
+      }
+    } catch (error) {
+      alertDiv.innerHTML = `<div class="alert alert-error">✗ ${error.message}</div>`;
+    }
+  }
 </script>
 </body>
 </html>
